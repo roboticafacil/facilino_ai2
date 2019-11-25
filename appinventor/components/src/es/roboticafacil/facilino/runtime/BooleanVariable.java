@@ -41,7 +41,7 @@ import java.util.Set;
                                  "with functions to send direct commands/telegrams to Facilino.",
                    category = ComponentCategory.EXTENSION,
                    nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/digital_signal_16x16.png")
+                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/binary1_16x16.png")
 @SimpleObject (external=true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
@@ -52,7 +52,7 @@ public class BooleanVariable  extends FacilinoActuatorSensorBase {
   private boolean _prev_value;
   private boolean _dataDispatched;
   private boolean _firstTime;
-  
+
   /**
    * Creates a new Facilino component.
    */
@@ -60,7 +60,7 @@ public class BooleanVariable  extends FacilinoActuatorSensorBase {
     super(container,"BooleanVariable",FacilinoBase.TYPE_BOOLEAN_VAR);
 	_index=0;
   }
-  
+
   @SimpleProperty(description = "Boolean index position.",
                   category = PropertyCategory.BEHAVIOR)
   public byte Index() {
@@ -73,57 +73,57 @@ public class BooleanVariable  extends FacilinoActuatorSensorBase {
   public void Index(byte index) {
     _index = index;
   }
-  
+
   @SimpleProperty(description = "The boolean value.",
                   category = PropertyCategory.BEHAVIOR)
   public boolean Value() {
     return _value;
   }
-  
+
   @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_COMPONENT,
                     defaultValue = "")
   @SimpleProperty
   public void FacilinoDevice(FacilinoBase facilinoBase) {
     super.FacilinoDevice(facilinoBase);
   }
-  
+
   private void attach(FacilinoBase facilino) {
 	  _facilino=facilino;
 	  _attach();
   }
-  
+
   private void detach() {
 	  _detach();
   }
-  
+
   @SimpleFunction(description = "Sends a digital read request to Facilino and waits for response.")
   public void Update() throws InterruptedException{
 	  _dataDispatched=false;
 	  _facilino.SendBytes(readTelegram());
 	  while(!_dataDispatched){ Thread.sleep(1);};
   }
-  
+
   @SimpleFunction(description = "Sends a digital read request to Facilino.")
   public void Request() {
 	  _dataDispatched=false;
 	  _facilino.SendBytes(readTelegram());
   }
-  
+
   @SimpleFunction(description = "Sets a boolean variable.")
   public void Set(boolean value) {
 	  _value=value;
 	  _prev_value=_value;
 	  _facilino.SendBytes(setTelegram(value));
   }
-  
+
   @SimpleFunction(description = "Toggles a boolean variable by sending a telegram to Facilino.")
   public void Toggle() {
 	  _value=!_value;
 	  _prev_value=_value;
 	  _facilino.SendBytes(setTelegram(_value));
-	  
+
   }
-  
+
   private YailList readTelegram() {
 	  byte[] bytes = new byte[5];
 	  bytes[0]='@';
@@ -138,17 +138,17 @@ public class BooleanVariable  extends FacilinoActuatorSensorBase {
 	  YailList list = YailList.makeList(array1);
 	  return list;
   }
-  
+
   @SimpleEvent(description = "Boolean variable read change event.")
     public void Changed(boolean value){
         EventDispatcher.dispatchEvent(this, "Changed",value);
     }
-	
+
 	@SimpleEvent(description = "Boolean variable read event.")
     public void Received(boolean value){
         EventDispatcher.dispatchEvent(this, "Received",value);
     }
-	
+
 	@Override
   public void dispatchData(byte cmd, byte[] data) {
 	  if (cmd==FacilinoBase.CMD_BOOLEAN_VAR_RESP){
@@ -165,7 +165,7 @@ public class BooleanVariable  extends FacilinoActuatorSensorBase {
 		  }
 	  }
   }
-  
+
   //@SimpleFunction(description = "Returns the tone telegram to send")
   private YailList setTelegram(boolean value)
   {

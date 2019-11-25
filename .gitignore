@@ -1,0 +1,16 @@
+appinventor\build\appengine\
+appinventor\appengine\build\
+appinventor\appengine\reports\
+appinventor\build\blocklyeditor\
+appinventor\blocklyeditor\build\
+appinventor\blocklyeditor\reports\
+appinventor\build\buildserver\
+appinventor\buildserver\build\
+appinventor\buildserver\reports\
+appinventor\build\common\
+appinventor\common\build\
+appinventor\common\reports\
+appinventor\build\components\
+appinventor\components\build\
+appinventor\components\reports\
+appinventor\build\
