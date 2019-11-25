@@ -89,7 +89,7 @@ public class RGB_LEDStrip  extends FacilinoActuatorBase {
   }
   
   @SimpleFunction(description = "Sends a number with the predefined RGB LED strip telegram to Facilino.")
-  public void ShowPredefLEDs(byte number) {
+  public void ShowPredefLEDs(int number) {
 	  _facilino.SendBytes(showPredefLEDsTelegram(number));
   }
   
@@ -128,14 +128,17 @@ public class RGB_LEDStrip  extends FacilinoActuatorBase {
 	  return list;
   }
   
-  private YailList showPredefLEDsTelegram(byte number)
+  private YailList showPredefLEDsTelegram(int number)
   {
-	  byte[] bytes = new byte[6];
+	  byte[] bytes = new byte[9];
 	  bytes[0]='@';
 	  bytes[1]=FacilinoBase.CMD_LED_STRIP_PREDEF;
-	  bytes[2]=2;
+	  bytes[2]=5;
 	  bytes[3]=(byte)_pin;
-	  bytes[4]=number;
+	  bytes[4]=(byte) ((number>>24) & 0xFF);
+	  bytes[5]=(byte) ((number>>16) & 0xFF);
+	  bytes[6]=(byte) ((number>>8) & 0xFF);
+	  bytes[7]=(byte) (number & 0xFF);
 	  bytes[5]='*';
 	  int n=bytes.length;
 	  Object[] array1 = new Object[n];
