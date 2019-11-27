@@ -66,6 +66,8 @@ public abstract class FacilinoBase  extends AndroidNonvisibleComponent implement
   public static byte CMD_SONAR_READ_RESP = 0x13;
   public static byte CMD_TCRT5000_READ_REQ = 0x14;
   public static byte CMD_TCRT5000_READ_RESP = 0x15;
+  public static byte CMD_GASMQX_READ_REQ = 0x16;
+  public static byte CMD_GASMQX_READ_RESP = 0x17;
   public static byte CMD_BUZZER_TONE = 0x20;
   public static byte CMD_BUZZER_MELODY = 0x21;
   //public static byte CMD_BUZZER_PREDEF_MELODY = 0x22;
@@ -75,12 +77,12 @@ public abstract class FacilinoBase  extends AndroidNonvisibleComponent implement
    public static byte CMD_BOOLEAN_VAR = (byte)0x80;
    public static byte CMD_BOOLEAN_VAR_REQ = (byte)0x81;
    public static byte CMD_BOOLEAN_VAR_RESP = (byte)0x82;
-   //public static byte CMD_INTEGER_VAR = 0x8dd;
   
   public static byte CMD_LED_MATRIX = 0x50;
   public static byte CMD_LED_MATRIX_PREDEF_EXPR = 0x51;
   public static byte CMD_LED_STRIP = 0x60;
   public static byte CMD_LED_STRIP_PREDEF = 0x61;
+  public static byte CMD_LED_STRIP_SET_BRIGHTNESS = 0x62;
   
   public static byte TYPE_DIGITAL_READ = 0x00;
   public static byte TYPE_DIGITAL_WRITE = 0x01;
@@ -95,9 +97,8 @@ public abstract class FacilinoBase  extends AndroidNonvisibleComponent implement
   public static byte TYPE_INFRARED = 0x10;
   public static byte TYPE_LED_MATRIX = 0x11;
   public static byte TYPE_LED_STRIP = 0x12;
-  
-  
-  public static byte TYPE_BOOLEAN_VAR = (byte)0x80;
+  public static byte TYPE_GASMQX = 0x13;
+  public static byte TYPE_BOOLEAN_VAR = 0x14;
   
   public static byte TYPE_MANAGER_BLUETOOTH = 0x00;
   public static byte TYPE_MANAGER_UDP = 0x01;

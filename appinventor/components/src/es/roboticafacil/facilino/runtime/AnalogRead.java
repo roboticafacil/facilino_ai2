@@ -43,9 +43,9 @@ import java.util.Set;
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
 public class AnalogRead  extends FacilinoSensorBase {
-  private byte _pin;
-  private int _value;
-  private boolean _dataDispatched;
+  protected byte _pin;
+  protected int _value;
+  protected boolean _dataDispatched;
   
   /**
    * Creates a new Facilino component.
@@ -111,7 +111,7 @@ public class AnalogRead  extends FacilinoSensorBase {
 	  bytes[0]='@';
 	  bytes[1]=FacilinoBase.CMD_ANALOG_READ_REQ;
 	  bytes[2]=1;
-	  bytes[3]=(byte)(_pin+14);
+	  bytes[3]=(byte)(_pin);
 	  bytes[4]='*';
 	  int n=bytes.length;
 	  Object[] array1 = new Object[n];
