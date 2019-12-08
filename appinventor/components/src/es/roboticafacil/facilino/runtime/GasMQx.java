@@ -77,13 +77,15 @@ public class GasMQx  extends AnalogRead {
 
 	@Override
   public void dispatchData(byte cmd, byte[] data) {
-	  if ((data[0]==_pin))
-	  {
-		  _value = (((int)data[1]<<8)&0xFF00)|(((int)data[2])&0x00FF);
-		  if (_value>_gasThreshold)
-			  GasDetected();
-		  Received(_value);
-		  _dataDispatched=true;
+	  if (cmd==FacilinoBase.CMD_ANALOG_READ_RESP){
+		  if ((data[0]==_pin))
+		  {
+			  _value = (((int)data[1]<<8)&0xFF00)|(((int)data[2])&0x00FF);
+			  if (_value>_gasThreshold)
+				  GasDetected();
+			  Received(_value);
+			  _dataDispatched=true;
+		  }
 	  }
   }
 
