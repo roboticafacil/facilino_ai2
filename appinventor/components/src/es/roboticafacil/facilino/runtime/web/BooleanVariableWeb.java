@@ -24,9 +24,9 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.BooleanVariableBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.BooleanVariableBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebSensorActuator;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
 
@@ -34,6 +34,7 @@ import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
 import java.lang.reflect.*;
 import java.util.Set;
 import org.json.JSONObject;
+import org.json.JSONException;
 /**
  * A buzzer component that provides a low-level interface to Facilino
  * with functions to send direct commands/telegrams to Facilino.
@@ -65,61 +66,87 @@ public class BooleanVariableWeb extends BooleanVariableBase implements FacilinoW
 		this.FacilinoDevice(facilinoBase);
 	}
 
+	@Override
 	@SimpleFunction(description = "Sends a digital read request to Facilino and waits for response.")
-	public void Update() throws InterruptedException{
+	public void Update(int index) throws InterruptedException{
 		_dataDispatched=false;
+		int maxWait=400;
 		if (_facilino instanceof FacilinoWeb)
 		{
-			((FacilinoWeb)_facilino).GetURL(buildURL());
-			while(!_dataDispatched){ Thread.sleep(1);};
+			((FacilinoWeb)_facilino).GetURL(buildURL(index));
+			while((!_dataDispatched)&&(maxWait>0)){ Thread.sleep(1); maxWait--;};
+			if (maxWait<=0)
+				this.Timeout(Facilino.ERROR_DATA_NOT_DISPATCHED);
 		}
 	}
 
+	@Override
 	@SimpleFunction(description = "Sends a digital read request to Facilino.")
-	public void Request() {
+	public void Request(int index) {
 		_dataDispatched=false;
 		if (_facilino instanceof FacilinoWeb)
-			((FacilinoWeb)_facilino).GetURL(buildURL());
+			((FacilinoWeb)_facilino).GetURL(buildURL(index));
 	}
 
 	@SimpleFunction(description = "Sets a boolean variable.")
-	public void Set(boolean value) {
+	public void Set(int index, boolean value) {
 		_value=value;
-		_prev_value=_value;
 		if (_facilino instanceof FacilinoWeb)
-			((FacilinoWeb)_facilino).GetURL(buildURL(value));
-	}
-
-	@SimpleFunction(description = "Toggles a boolean variable by sending a telegram to Facilino.")
-	public void Toggle() {
-		_value=!_value;
-		_prev_value=_value;
-		if (_facilino instanceof FacilinoWeb)
-			((FacilinoWeb)_facilino).GetURL(buildURL(_value));
+			((FacilinoWeb)_facilino).GetURL(buildURL(index,_value));
 	}
 	
-	private String buildURL()
+	private String buildURL(int index)
 	{
 		String str="/";
 		str+=logTag;
 		str+="/";
-		str+=_index;
+		str+=index;
 		return str;
 	}
 	
-	private String buildURL(boolean value)
+	private String buildURL(int index, boolean value)
 	{
 		String str="/";
 		str+=logTag;
 		str+="/";
-		str+=_index;
+		str+=index;
 		str+="?value=";
-		str+=value? "true" : "false";
+		str+=value? "1":"0";
 		return str;
 	}
 
 	public void dispatchContents(JSONObject json)
 	{
+		int index=-1;
+		boolean value=false;
+		Iterator<String> it = json.keys();
+		while(it.hasNext())
+		{
+			String key = it.next();
+			if (key.equals(logTag))
+			{
+				try{
+					JSONObject data = json.getJSONObject(key);
+					Iterator<String> it1 = data.keys();
+					while(it1.hasNext())
+					{
+						String key1 = it1.next();
+						if (key1.equals("index"))
+							index=data.getInt(key1);
+						if (key1.equals("value"))
+							value=data.getInt(key1)==1? true : false;
+					}
+				}
+				catch (JSONException e)
+				{
+					if (_facilino instanceof FacilinoWeb)
+						((FacilinoWeb)_facilino).JSONError(FacilinoWeb.ERROR_JSON);
+					return;
+				}
+			}
+		}
+		_value=value;
+		Received(index,value);
 		_dataDispatched=true;
 	}
 }

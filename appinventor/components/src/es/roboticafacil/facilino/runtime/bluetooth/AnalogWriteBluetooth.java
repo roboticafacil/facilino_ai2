@@ -9,6 +9,7 @@ import java.util.*;
 import com.google.appinventor.components.runtime.*;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.PropertyCategory;
+import com.google.appinventor.components.annotations.UsesLibraries;
 import com.google.appinventor.components.common.PropertyTypeConstants;
 import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.SimpleObject;
@@ -23,11 +24,11 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
+import es.roboticafacil.facilino.runtime.bluetooth.Facilino;
+import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBase;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothClient;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothActuator;
-import es.roboticafacil.facilino.common.AnalogWriteBase;
+import es.roboticafacil.facilino.runtime.bluetooth.AnalogWriteBase;
 
 //import java.lang.Class;
 import java.lang.reflect.*;
@@ -48,6 +49,7 @@ import java.util.Set;
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
+//@UsesLibraries(libraries = "es.roboticafacil.facilino.runtime.bluetooth.jar")
 public class AnalogWriteBluetooth  extends AnalogWriteBase implements FacilinoBluetoothActuator {
 	/**
 	 * Creates a new Facilino component.
@@ -65,21 +67,22 @@ public class AnalogWriteBluetooth  extends AnalogWriteBase implements FacilinoBl
 	
 	@Override
 	@SimpleFunction(description = "Sets an analog output.")
-	public void Set(byte value) {
+	public void Set(int value) {
 		_value=value;
 		if (_facilino instanceof FacilinoBluetoothClient)
 			((FacilinoBluetoothClient)_facilino).SendBytes(setTelegram(value));
 	}
 	
-	private YailList setTelegram(byte value)
+	private YailList setTelegram(int value)
 	{
-		byte[] bytes = new byte[6];
+		byte[] bytes = new byte[7];
 		bytes[0]='@';
 		bytes[1]=FacilinoBluetoothClient.CMD_ANALOG_WRITE;
-		bytes[2]=2;
+		bytes[2]=3;
 		bytes[3]=(byte)_pin;
-		bytes[4]=value;
-		bytes[5]='*';
+		bytes[4]=(byte)((value>>8)&0x00FF);
+		bytes[5]=(byte)((value)&0x00FF);
+		bytes[6]='*';
 		int n=bytes.length;
 		Object[] array = new Object[n];
 		for (int i=0;i<n;i++)

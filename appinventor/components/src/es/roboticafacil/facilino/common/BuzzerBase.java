@@ -35,13 +35,7 @@ import java.util.Set;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A buzzer component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/buzzer_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -70,7 +64,7 @@ public abstract class BuzzerBase  extends FacilinoActuatorBase {
 	}
 	
 	@SimpleFunction(description = "Sends a tone telegram to Facilino.")
-	public abstract void Tone(int frequency, int duration);
+	public void Tone(int frequency, int duration) {};
 	
 	/*@SimpleFunction(description = "Sends a number with the predefined melody telegram to Facilino.")
 	public void PredefMelody(byte number) {
@@ -78,6 +72,6 @@ public abstract class BuzzerBase  extends FacilinoActuatorBase {
 	}*/
 	
 	@SimpleFunction(description = "Sends a melody telegram to Facilino.")
-	public abstract void Melody(YailList melody);
+	public void Melody(YailList melody) {};
 
 }

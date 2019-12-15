@@ -9,6 +9,7 @@ import java.util.*;
 import com.google.appinventor.components.runtime.*;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.PropertyCategory;
+import com.google.appinventor.components.annotations.UsesLibraries;
 import com.google.appinventor.components.common.PropertyTypeConstants;
 import com.google.appinventor.components.annotations.SimpleEvent;
 import com.google.appinventor.components.annotations.SimpleFunction;
@@ -24,9 +25,9 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.BooleanVariableBase;
+import es.roboticafacil.facilino.runtime.bluetooth.Facilino;
+import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBase;
+import es.roboticafacil.facilino.runtime.bluetooth.BooleanVariableBase;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothSensorActuator;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothClient;
 
@@ -50,6 +51,7 @@ import org.json.JSONObject;
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
+//@UsesLibraries(libraries = "es.roboticafacil.facilino.runtime.bluetooth.jar")
 public class BooleanVariableBluetooth  extends BooleanVariableBase implements FacilinoBluetoothSensorActuator {
 	/**
 	 * Creates a new Facilino component.
@@ -69,10 +71,13 @@ public class BooleanVariableBluetooth  extends BooleanVariableBase implements Fa
 	@SimpleFunction(description = "Sends a digital read request to Facilino and waits for response.")
 	public void Update() throws InterruptedException{
 		_dataDispatched=false;
+		int maxWait=200;
 		if (_facilino instanceof FacilinoBluetoothClient)
 		{
 			((FacilinoBluetoothClient)_facilino).SendBytes(readTelegram());
-			while(!_dataDispatched){ Thread.sleep(1);};
+			while((!_dataDispatched)&&(maxWait>0)){ Thread.sleep(1); maxWait--;};
+			if (maxWait<=0)
+				this.Timeout(Facilino.ERROR_DATA_NOT_DISPATCHED);
 		}
 	}
 
@@ -125,7 +130,7 @@ public class BooleanVariableBluetooth  extends BooleanVariableBase implements Fa
 				if (_firstTime)
 					_firstTime=false;
 				else if (_value!=_prev_value)
-				Changed(_value);
+					Changed(_value);
 				_prev_value=_value;
 				Received(_value);
 				_dataDispatched=true;

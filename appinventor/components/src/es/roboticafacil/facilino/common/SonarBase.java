@@ -32,13 +32,7 @@ import org.json.JSONObject;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A sonar component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/hc_sr04_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -46,7 +40,6 @@ public abstract class SonarBase extends FacilinoSensorBase {
   protected byte _pin_ECHO;
   protected byte _pin_TRIGGER;
   protected int _distance;
-  protected boolean _dataDispatched;
   protected int _threshold;
   
   /**
@@ -88,7 +81,7 @@ public abstract class SonarBase extends FacilinoSensorBase {
 
   @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
                     defaultValue = "20")
-  @SimpleProperty(description = "Threshold value to compare, if distance is smaller than threshold then throws collision event")
+  @SimpleProperty(description = "Threshold value to compare, if distance is smaller than threshold then throws detected object event")
   public void Threshold(int threshold) {
     _threshold = threshold;
   }
@@ -100,10 +93,10 @@ public abstract class SonarBase extends FacilinoSensorBase {
   }
     
   @SimpleFunction(description = "Sends a sonar read request to Facilino and waits for response.")
-  public abstract void Update() throws InterruptedException;
+  public void Update() throws InterruptedException{};
   
   @SimpleFunction(description = "Sends a sonar read request to Facilino.")
-  public abstract void Request();
+  public void Request() {};
   
 	
 	@SimpleEvent(description = "Sonar distance read (in cm) event.")
@@ -111,9 +104,9 @@ public abstract class SonarBase extends FacilinoSensorBase {
         EventDispatcher.dispatchEvent(this, "Received",distance);
     }
 	
-	@SimpleEvent(description = "Sonar collision event when the distance is lower than the threshold.")
-    public void Collision(){
-        EventDispatcher.dispatchEvent(this, "Collision");
+	@SimpleEvent(description = "Sonar detected object event when the distance is lower than the threshold.")
+    public void DetectedObject(){
+        EventDispatcher.dispatchEvent(this, "DetectedObject");
     }
 
 }

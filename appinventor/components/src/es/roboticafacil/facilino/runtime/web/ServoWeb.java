@@ -20,10 +20,10 @@ import com.google.appinventor.components.common.YaVersion;
 import com.google.appinventor.components.runtime.util.YailList;
 
 import com.google.appinventor.components.runtime.util.SdkLevel;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
-import es.roboticafacil.facilino.common.ServoBase;
+import es.roboticafacil.facilino.runtime.web.ServoBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebActuator;
 
 //import java.lang.Class;
@@ -61,12 +61,12 @@ public class ServoWeb  extends ServoBase implements FacilinoWebActuator {
 	}
   
   @SimpleFunction(description = "Sends a servo telegram to Facilino.")
-  public void Move(byte angle) {
+  public void Move(int angle) {
 	  if (_facilino instanceof FacilinoWeb)
 			((FacilinoWeb)_facilino).GetURL(buildURL(angle));
   }
   
-  private String buildURL(byte angle)
+  private String buildURL(int angle)
 	{
 		String str="/";
 		str+=logTag;

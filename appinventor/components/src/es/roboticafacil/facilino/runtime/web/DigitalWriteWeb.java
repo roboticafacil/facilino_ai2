@@ -23,9 +23,9 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.DigitalWriteBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.DigitalWriteBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebActuator;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
 
@@ -76,9 +76,8 @@ public class DigitalWriteWeb  extends DigitalWriteBase implements FacilinoWebAct
 	  _value=!_value;
 	  if (_facilino instanceof FacilinoWeb)
 		((FacilinoWeb)_facilino).GetURL(buildURL(_value));
-	  
   }
-  
+
   private String buildURL(boolean value)
 	{
 		String str="/";
@@ -86,7 +85,7 @@ public class DigitalWriteWeb  extends DigitalWriteBase implements FacilinoWebAct
 		str+="/";
 		str+=_pin;
 		str+="?value=";
-		str+=value;
+		str+=value? "1" : "0";
 		return str;
 	}
 }

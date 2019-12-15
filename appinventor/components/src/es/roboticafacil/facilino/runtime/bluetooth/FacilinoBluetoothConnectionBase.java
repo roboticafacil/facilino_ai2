@@ -9,6 +9,7 @@ package es.roboticafacil.facilino.runtime.bluetooth;
 import com.google.appinventor.components.runtime.*;
 import com.google.appinventor.components.annotations.DesignerProperty;
 import com.google.appinventor.components.annotations.PropertyCategory;
+import com.google.appinventor.components.annotations.UsesLibraries;
 import com.google.appinventor.components.annotations.SimpleEvent;
 import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.SimpleObject;
@@ -19,9 +20,9 @@ import com.google.appinventor.components.runtime.util.ErrorMessages;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 import com.google.appinventor.components.runtime.util.YailList;
 import com.google.appinventor.components.runtime.util.TimerInternal;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.FacilinoSensor;
+import es.roboticafacil.facilino.runtime.bluetooth.Facilino;
+import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBase;
+import es.roboticafacil.facilino.runtime.bluetooth.FacilinoSensor;
 
 import android.util.Log;
 
@@ -43,6 +44,7 @@ import java.util.List;
  * @author lizlooney@google.com (Liz Looney)
  */
 @SimpleObject
+//@UsesLibraries(libraries = "es.roboticafacil.facilino.runtime.bluetooth.jar")
 public abstract class FacilinoBluetoothConnectionBase extends FacilinoBase
     implements Component, OnDestroyListener, Deleteable, AlarmHandler {
 

@@ -11,7 +11,7 @@ import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.PropertyCategory;
 import com.google.appinventor.components.common.PropertyTypeConstants;
 import com.google.appinventor.components.annotations.SimpleEvent;
-//import com.google.appinventor.components.annotations.SimpleFunction;
+import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.SimpleObject;
 import com.google.appinventor.components.annotations.SimpleProperty;
 import com.google.appinventor.components.annotations.DesignerProperty;
@@ -24,9 +24,19 @@ import com.google.appinventor.components.runtime.util.YailList;
 import com.google.appinventor.components.runtime.errors.PermissionException;
 import com.google.appinventor.components.runtime.util.AsynchUtil;
 import com.google.appinventor.components.runtime.util.ErrorMessages;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.FacilinoSensor;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.FacilinoSensor;
+import es.roboticafacil.facilino.runtime.web.IPsNamesResponse;
+
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
+import java.net.InetAddress;
+import java.util.Formatter;
+import java.math.BigInteger;
+import android.content.Context;
 
 //import java.util.concurrent.locks.Lock;
 //import java.util.concurrent.locks.ReentrantLock;
@@ -52,6 +62,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
+import org.json.JSONException;
 /**
  * A Facilino web component that provides a low-level interface to Facilino
  * with functions to send HTTP commands to Facilino. Based on App Inventor 2 Web component
@@ -69,8 +80,12 @@ import org.json.JSONObject;
 @SimpleObject (external=true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
-                                   "android.permission.READ_EXTERNAL_STORAGE")
-public class FacilinoWeb  extends FacilinoBase {
+                                   "android.permission.READ_EXTERNAL_STORAGE" +
+								   "android.permission.ACCESS_WIFI_STATE," +
+                                   "android.permission.ACCESS_NETWORK_STATE")
+public class FacilinoWeb  extends FacilinoBase implements IPsNamesResponse {
+	
+	public static final String ERROR_JSON="Error in JSON object";
 	
 	private static class InvalidRequestHeadersException extends Exception {
 		/*
@@ -136,8 +151,10 @@ public class FacilinoWeb  extends FacilinoBase {
 	protected URL url;
 	protected String host;
 	protected int port=80;
-	//protected YailList requestHeaders = new YailList();
+	protected int scanTimeOut=1000;
 	protected Map<String, String> requestHeaders = new HashMap<>();
+	private FacilinoWebManager webManager;
+	private List<String> hosts = new ArrayList<String>();
 	
 	private static final String LOG_TAG = "FacilinoWeb";
 	
@@ -158,16 +175,35 @@ public class FacilinoWeb  extends FacilinoBase {
 		return host;
 	}
 	
-	@DesignerProperty(
+	/*@DesignerProperty(
 			editorType = PropertyTypeConstants.PROPERTY_TYPE_STRING,
-			defaultValue = "192.168.1.100")
+			defaultValue = "192.168.1.100")*/
 	@SimpleProperty
 	public void Host(String h) {
+		int firstSpace = h.indexOf(" ");
+		if (firstSpace != -1) {
+		  h = h.substring(0, firstSpace);
+		}
 		host=h;
 		requestHeaders.put("Host",host+":"+port);
 	}
 	
 	@SimpleProperty(
+			category = PropertyCategory.BEHAVIOR,
+			description ="Scan TimeOut")
+	public int ScanTimeOut() {
+		return scanTimeOut;
+	}
+	
+	@DesignerProperty(
+			editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
+			defaultValue = "1000")
+	@SimpleProperty
+	public void ScanTimeOut(int time) {
+		scanTimeOut=time;
+	}
+	
+	/*@SimpleProperty(
 			category = PropertyCategory.BEHAVIOR,
 			description ="Port number")
 	public int Port() {
@@ -181,12 +217,64 @@ public class FacilinoWeb  extends FacilinoBase {
 	public void Port(int p) {
 		port=p;
 		requestHeaders.put("Host",host+":"+port);
+	}*/
+	
+	@SimpleFunction(description = "Gets the list of available hosts (list with IPs addresses and names)")
+	public void Scan()
+	{
+		hosts.clear();
+		webManager = new FacilinoWebManager(activity);
+		webManager.delegate = this;
+		webManager.execute();
 	}
+	
+	@SimpleFunction(description = "Cancel current scan")
+	public void CancelScanning()
+	{
+		webManager.cancel(true);
+	}
+	
+	@SimpleEvent(description = "Gets the list of hosts")
+	@Override
+	public void ScanComplete(List<String> hosts){
+     EventDispatcher.dispatchEvent(this, "ScanComplete",hosts);
+   }
+   
+   @SimpleEvent(description = "Scanning has been cancelled")
+	@Override
+	public void ScanCancelled(){
+     EventDispatcher.dispatchEvent(this, "ScanCancelled");
+   }
+   
+   @SimpleEvent(description = "Scanning error")
+	@Override
+	public void ScanningError(String error){
+     EventDispatcher.dispatchEvent(this, "ScanningError",error);
+   }
+   
+   @SimpleEvent(description = "Scanning host")
+	@Override
+	public void ScanningHost(String host){
+     EventDispatcher.dispatchEvent(this, "ScanningHost",host);
+   }
+   
+   @SimpleEvent(description = "A new host has been detected")
+	@Override
+	public void HostDetected(String ip, String hostname){
+		hosts.add(ip+" "+hostname);
+		EventDispatcher.dispatchEvent(this, "HostDetected",ip,hostname);
+   }
 	
 	@SimpleEvent(description = "Get URL string")
 		public void GotResponse(String url, int responseCode, String responseType, String responseContent){
 				EventDispatcher.dispatchEvent(this, "GotResponse",url);
 		}
+		
+	@Override
+	public List<String> GetHosts()
+	{
+		return hosts;
+	}
 
 	
 	public void GetURL(String URL)
@@ -209,6 +297,11 @@ public class FacilinoWeb  extends FacilinoBase {
 			}
 		});
 		
+	}
+	
+	@SimpleEvent(description = "JSON Error.")
+	public void JSONError(String error) {
+			EventDispatcher.dispatchEvent(this, "JSONError",error);
 	}
 	
 	/*
@@ -255,11 +348,23 @@ public class FacilinoWeb  extends FacilinoBase {
 						@Override
 						public void run() {
 							GotResponse(webProps.urlString,responseCode,responseType,responseContent);
-							JSONObject json= new JSONObject(responseContent);
-							for (FacilinoSensor sensor: attachedSensors)
+							//if (!responseContent.isEmpty())
 							{
-								if (sensor instanceof FacilinoWebSensor)
-									((FacilinoWebSensor)sensor).dispatchContents(json);
+								try
+								{
+									JSONObject json= new JSONObject(responseContent);
+									for (FacilinoSensor sensor: attachedSensors)
+									{
+										if (sensor instanceof FacilinoWebSensor)
+											((FacilinoWebSensor)sensor).dispatchContents(json);
+										if (sensor instanceof FacilinoWebSensorActuator)
+											((FacilinoWebSensorActuator)sensor).dispatchContents(json);
+									}
+								}
+								catch (JSONException e)
+								{
+									//FacilinoWeb.JSONError(FacilinoWeb.ERROR_JSON);
+								}
 							}
 						}
 					});

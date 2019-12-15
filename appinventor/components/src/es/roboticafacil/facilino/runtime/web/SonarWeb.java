@@ -19,9 +19,9 @@ import com.google.appinventor.components.annotations.UsesPermissions;
 import com.google.appinventor.components.common.ComponentCategory;
 import com.google.appinventor.components.common.YaVersion;
 import com.google.appinventor.components.runtime.util.SdkLevel;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.SonarBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.SonarBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebSensor;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
 import com.google.appinventor.components.runtime.util.YailList;
@@ -29,6 +29,7 @@ import com.google.appinventor.components.runtime.util.YailList;
 import java.lang.reflect.*;
 import java.util.Set;
 import org.json.JSONObject;
+import org.json.JSONException;
 /**
  * A sonar component that provides a low-level interface to Facilino
  * with functions to send direct commands/telegrams to Facilino.
@@ -60,18 +61,23 @@ public class SonarWeb extends SonarBase implements FacilinoWebSensor {
 		this.FacilinoDevice(facilinoBase);
 	}
 	
-  @SimpleFunction(description = "Sends a sonar read request to Facilino and waits for response.")
-  public void Update() throws InterruptedException {
+	@Override
+	@SimpleFunction(description = "Sends a sonar read request to Facilino and waits for response.")
+	public void Update() throws InterruptedException {
 	  _dataDispatched=false;
+	  int maxWait=400;
 	  if (_facilino instanceof FacilinoWeb)
 	  {
 		((FacilinoWeb)_facilino).GetURL(buildURL());
-		while (!_dataDispatched){Thread.sleep(1);}
+		while ((!_dataDispatched)&&(maxWait>0)){Thread.sleep(1); maxWait--;}
+		if (maxWait<=0)
+			this.Timeout(Facilino.ERROR_DATA_NOT_DISPATCHED);
 	  }
   }
-  
-  @SimpleFunction(description = "Sends a sonar read request to Facilino.")
-  public void Request() {
+	
+	@Override
+	@SimpleFunction(description = "Sends a sonar read request to Facilino.")
+	public void Request() {
 	  _dataDispatched=false;
 	  if (_facilino instanceof FacilinoWeb)
 			((FacilinoWeb)_facilino).GetURL(buildURL());
@@ -90,7 +96,45 @@ public class SonarWeb extends SonarBase implements FacilinoWebSensor {
 
   public void dispatchContents(JSONObject json)
   {
-	  _dataDispatched=true;
+	int pin_ECHO=-1;
+	int pin_TRIGGER=-1;
+	int distance=0;
+	Iterator<String> it = json.keys();
+	while(it.hasNext())
+	{
+		String key = it.next();
+		if (key.equals(logTag))
+		{
+			try{
+				JSONObject data = json.getJSONObject(key);
+				Iterator<String> it1 = data.keys();
+				while(it1.hasNext())
+				{
+					String key1 = it1.next();
+					if (key1.equals("pin_echo"))
+						pin_ECHO=data.getInt(key1);
+					if (key1.equals("pin_trigger"))
+						pin_TRIGGER=data.getInt(key1);
+					if (key1.equals("distance"))
+						distance=data.getInt(key1);
+				}
+			}
+			catch (JSONException e)
+			{
+				if (_facilino instanceof FacilinoWeb)
+						((FacilinoWeb)_facilino).JSONError(FacilinoWeb.ERROR_JSON);
+				return;
+			}
+		}
+	}
+	if((_pin_ECHO==pin_ECHO)&&(_pin_TRIGGER==pin_TRIGGER))
+	{
+		_distance=distance;
+		Received(_distance);
+		if (_distance<_threshold)
+			DetectedObject();
+		_dataDispatched=true;
+	}
   }
 
 }

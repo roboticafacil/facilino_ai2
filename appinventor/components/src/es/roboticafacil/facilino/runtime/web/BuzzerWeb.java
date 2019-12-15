@@ -23,10 +23,10 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
-import es.roboticafacil.facilino.common.BuzzerBase;
+import es.roboticafacil.facilino.runtime.web.BuzzerBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebActuator;
 
 //import java.lang.Class;

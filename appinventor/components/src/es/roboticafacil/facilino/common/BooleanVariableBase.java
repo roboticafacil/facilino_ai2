@@ -37,13 +37,7 @@ import org.json.JSONObject;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A boolean variable component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/binary.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -51,7 +45,6 @@ public abstract class BooleanVariableBase  extends FacilinoActuatorSensorBase {
 	protected byte _index;
 	protected boolean _value;
 	protected boolean _prev_value;
-	protected boolean _dataDispatched;
 	protected boolean _firstTime;
 
 	/**
@@ -82,16 +75,16 @@ public abstract class BooleanVariableBase  extends FacilinoActuatorSensorBase {
 	}
 
 	@SimpleFunction(description = "Sends a digital read request to Facilino and waits for response.")
-	public abstract void Update() throws InterruptedException;
+	public void Update() throws InterruptedException {};
 
 	@SimpleFunction(description = "Sends a digital read request to Facilino.")
-	public abstract void Request();
+	public void Request() {};
 
 	@SimpleFunction(description = "Sets a boolean variable.")
-	public abstract void Set(boolean value);
+	public void Set(boolean value) {};
 
 	@SimpleFunction(description = "Toggles a boolean variable by sending a telegram to Facilino.")
-	public abstract void Toggle();
+	public void Toggle() {};
 
 	@SimpleEvent(description = "Boolean variable read change event.")
 		public void Changed(boolean value){

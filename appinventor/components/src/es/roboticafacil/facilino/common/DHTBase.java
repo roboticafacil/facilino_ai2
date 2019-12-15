@@ -32,13 +32,7 @@ import java.util.Set;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A DHT component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/dht11_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -46,7 +40,6 @@ public abstract class DHTBase extends FacilinoSensorBase {
 	protected byte _pin;
 	protected int _temperature;
 	protected int _humidity;
-	protected boolean _dataDispatched;
 	protected int _lowTemperatureThreshold;
 	protected int _lowHumidityThreshold;
 	protected int _highTemperatureThreshold;
@@ -134,10 +127,10 @@ public abstract class DHTBase extends FacilinoSensorBase {
 	}
 	
 	@SimpleFunction(description = "Sends a DHT read request to Facilino and waits for response.")
-	public abstract void Update() throws InterruptedException;
+	public void Update() throws InterruptedException {};
 	
 	@SimpleFunction(description = "Sends a DTH11 read request to Facilino.")
-	public abstract void Request();
+	public void Request() {};
 		
 	@SimpleEvent(description = "DHT temperature and humidity read event.")
 		public void Received(int temperature, int humidity){

@@ -20,10 +20,10 @@ import com.google.appinventor.components.common.YaVersion;
 import com.google.appinventor.components.runtime.util.YailList;
 
 import com.google.appinventor.components.runtime.util.SdkLevel;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
-import es.roboticafacil.facilino.common.ServoContBase;
+import es.roboticafacil.facilino.runtime.web.ServoContBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebActuator;
 
 //import java.lang.Class;
@@ -73,7 +73,6 @@ public class ServoContWeb  extends ServoContBase implements FacilinoWebActuator 
 		else if (velocity<-100)
 		  velocity=-100;
 		velocity = (((velocity*90)/100+90));
-	  
 		String str="/";
 		str+=logTag;
 		str+="/";

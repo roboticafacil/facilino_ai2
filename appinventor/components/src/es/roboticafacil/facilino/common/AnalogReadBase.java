@@ -39,14 +39,13 @@ import org.json.JSONObject;
                    category = ComponentCategory.EXTENSION,
                    nonVisible = true,
                    iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/analog_signal_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
 public abstract class AnalogReadBase  extends FacilinoSensorBase {
 	protected byte _pin;
 	protected int _value;
-	protected boolean _dataDispatched;
 	
 	/**
 	 * Creates a new Facilino component.
@@ -84,13 +83,13 @@ public abstract class AnalogReadBase  extends FacilinoSensorBase {
 	}
 	
 	@SimpleFunction(description = "Sends an analog read request to Facilino and waits for response.")
-	public abstract void Update() throws InterruptedException;
+	public void Update() throws InterruptedException {};
 	
 	@SimpleFunction(description = "Sends an analog read request to Facilino.")
-	public abstract void Request();
+	public void Request() {};
 	
 	@SimpleEvent(description = "Analog read event.")
-		public void Received(int value){
-				EventDispatcher.dispatchEvent(this, "Received",value);
-		}
+	public void Received(int value){
+			EventDispatcher.dispatchEvent(this, "Received",value);
+	}
 }

@@ -10,7 +10,9 @@ import java.util.*;
 import com.google.appinventor.components.runtime.*;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.PropertyCategory;
+import com.google.appinventor.components.annotations.UsesLibraries;
 import com.google.appinventor.components.annotations.SimpleFunction;
+import com.google.appinventor.components.annotations.SimpleEvent;
 import com.google.appinventor.components.annotations.SimpleObject;
 import com.google.appinventor.components.annotations.SimpleProperty;
 import com.google.appinventor.components.annotations.DesignerProperty;
@@ -24,7 +26,7 @@ import com.google.appinventor.components.runtime.util.SdkLevel;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothConnectionBase;
 import com.google.appinventor.components.runtime.util.YailList;
 import com.google.appinventor.components.runtime.util.TimerInternal;
-import es.roboticafacil.facilino.common.FacilinoSensor;
+import es.roboticafacil.facilino.runtime.bluetooth.FacilinoSensor;
 import android.util.Log;
 
 import java.io.IOException;
@@ -48,6 +50,7 @@ import java.util.UUID;
 @UsesPermissions(permissionNames =
                  "android.permission.BLUETOOTH, " +
                  "android.permission.BLUETOOTH_ADMIN")
+//@UsesLibraries(libraries = "es.roboticafacil.facilino.runtime.bluetooth.jar")
 public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBase {
   private static final String SPP_UUID = "00001101-0000-1000-8000-00805F9B34FB";
   private final List<Component> attachedComponents = new ArrayList<Component>();
@@ -91,6 +94,8 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
   
   private static final int DEFAULT_INTERVAL = 100;  // ms
   private static final boolean DEFAULT_ENABLED = true;
+  
+  	private static final String ERROR_TELEGRAM="Error in bluetooth Telegram";
 
   /**
    * Creates a new BluetoothClient.
@@ -449,7 +454,7 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 		while (bytesIterator.hasNext()) {
 			byte data = (byte)bytesIterator.next().intValue();
 			if ((_telegramPos==0)&&(data=='@'))
-			_telegramPos++;
+				_telegramPos++;
 			else if (_telegramPos==1)
 			{
 				_telegramCmd=data;
@@ -472,14 +477,21 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 				{
 					if (sensor instanceof FacilinoBluetoothSensor)
 					{
-					//TODO: Check if the CMD matches with the sensor type, before dispatching the Event
-					((FacilinoBluetoothSensor) sensor).dispatchData(_telegramCmd,_telegramData);
+						((FacilinoBluetoothSensor) sensor).dispatchData(_telegramCmd,_telegramData);
 					}
 				}
 				_telegramPos=0;
 			}
 			else
+			{
+				TelegramError(FacilinoBluetoothClient.ERROR_TELEGRAM);
 				_telegramPos=0;
+			}
 		}
+	}
+	
+	@SimpleEvent(description = "Telegram error.")
+	public void TelegramError(String error) {
+			EventDispatcher.dispatchEvent(this, "TelegramError",error);
 	}
 }

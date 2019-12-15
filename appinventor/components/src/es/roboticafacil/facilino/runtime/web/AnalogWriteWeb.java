@@ -23,9 +23,9 @@ import com.google.appinventor.components.runtime.util.Ev3Constants;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.AnalogWriteBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.AnalogWriteBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebActuator;
 
@@ -64,13 +64,13 @@ public class AnalogWriteWeb  extends AnalogWriteBase implements FacilinoWebActua
 	}
 	
 	@SimpleFunction(description = "Sets an analog output.")
-	public void Set(byte value) {
+	public void Set(int value) {
 		_value=value;
 		if (_facilino instanceof FacilinoWeb)
 			((FacilinoWeb)_facilino).GetURL(buildURL(value));
 	}
 	
-	private String buildURL(byte value)
+	private String buildURL(int value)
 	{
 		String str="/";
 		str+=logTag;

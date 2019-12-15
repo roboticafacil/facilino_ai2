@@ -35,13 +35,7 @@ import java.util.Set;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A digital output (write) component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/digital_signal_out_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -77,8 +71,8 @@ public abstract class DigitalWriteBase  extends FacilinoActuatorBase {
   }
     
   @SimpleFunction(description = "Sets a digital output.")
-  public abstract void Set(boolean value);
+  public void Set(boolean value) {};
   
   @SimpleFunction(description = "Toggles a digital output by sending a telegram to Facilino.")
-  public abstract void Toggle();
+  public void Toggle() {};
 }

@@ -9,11 +9,14 @@ package es.roboticafacil.facilino.common;
 import com.google.appinventor.components.runtime.*;
 
 import com.google.appinventor.components.annotations.SimpleFunction;
+import com.google.appinventor.components.annotations.SimpleEvent;
+import com.google.appinventor.components.annotations.SimpleProperty;
 import com.google.appinventor.components.annotations.DesignerProperty;
 import com.google.appinventor.components.common.PropertyTypeConstants;
-import com.google.appinventor.components.annotations.SimpleProperty;
+import com.google.appinventor.components.annotations.PropertyCategory;
+import com.google.appinventor.components.annotations.SimpleObject;
 
-
+//@SimpleObject (external =true)
 public abstract class FacilinoActuatorSensorBase extends AndroidNonvisibleComponent
     implements Component, Deleteable, FacilinoActuator, FacilinoSensor {
   /**
@@ -22,6 +25,8 @@ public abstract class FacilinoActuatorSensorBase extends AndroidNonvisibleCompon
   protected FacilinoBase _facilino;
   final protected String logTag;
   final protected byte _type;
+  protected boolean _dataDispatched;
+  protected int _updateTimeout;
   
   
 	protected void FacilinoDevice(FacilinoBase facilinoBase) {
@@ -75,8 +80,26 @@ public abstract class FacilinoActuatorSensorBase extends AndroidNonvisibleCompon
 		return _type;
 	}
 	
-@Override
+	@Override
 	public void onDelete() {
 	_detach();
+	}
+	
+	@SimpleProperty(description = "Update timeout in ms.",
+									category = PropertyCategory.BEHAVIOR)
+	public int UpdateTimeout() {
+		return _updateTimeout;
+	}
+
+	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
+										defaultValue = "0")
+	@SimpleProperty(description = "Update timeout in ms")
+	public void UpdateTimeout(int updateTimeout) {
+		_updateTimeout = updateTimeout;
+	}
+	
+	@SimpleEvent(description = "Update timeout.")
+	public void UpdateTimeout(String error) {
+			EventDispatcher.dispatchEvent(this, "UpdateTimeout",error);
 	}
 }

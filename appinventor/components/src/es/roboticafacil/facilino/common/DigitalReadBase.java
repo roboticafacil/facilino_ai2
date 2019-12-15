@@ -32,13 +32,7 @@ import org.json.JSONObject;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A digital read component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/digital_signal_in_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -46,7 +40,6 @@ public abstract class DigitalReadBase  extends FacilinoSensorBase {
 	protected byte _pin;
 	protected boolean _value;
 	protected boolean _prev_value;
-	protected boolean _dataDispatched;
 	protected boolean _firstTime;
 	
 	/**
@@ -79,18 +72,18 @@ public abstract class DigitalReadBase  extends FacilinoSensorBase {
 	}
 	
 	@SimpleFunction(description = "Sends a digital read request to Facilino and waits for response.")
-	public abstract void Update() throws InterruptedException;
+	public void Update() throws InterruptedException {};
 	
 	@SimpleFunction(description = "Sends a digital read request to Facilino.")
-	public abstract void Request();
+	public void Request() {};
 	
 	@SimpleEvent(description = "Digital read change event.")
-		public void Changed(boolean value){
-				EventDispatcher.dispatchEvent(this, "Changed",value);
-		}
+	public void Changed(boolean value){
+			EventDispatcher.dispatchEvent(this, "Changed",value);
+	}
 	
 	@SimpleEvent(description = "Digital read event.")
-		public void Received(boolean value){
-				EventDispatcher.dispatchEvent(this, "Received",value);
-		}
+	public void Received(boolean value){
+			EventDispatcher.dispatchEvent(this, "Received",value);
+	}
 }

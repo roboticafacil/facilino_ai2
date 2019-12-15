@@ -12,8 +12,9 @@ import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.DesignerProperty;
 import com.google.appinventor.components.common.PropertyTypeConstants;
 import com.google.appinventor.components.annotations.SimpleProperty;
+import com.google.appinventor.components.annotations.SimpleObject;
 
-
+//@SimpleObject (external =true)
 public abstract class FacilinoActuatorBase extends AndroidNonvisibleComponent
     implements Component, Deleteable, FacilinoActuator {
   /**

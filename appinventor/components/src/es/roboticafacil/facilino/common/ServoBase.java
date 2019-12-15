@@ -32,13 +32,7 @@ import java.util.Set;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A servo component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/servo_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -67,6 +61,6 @@ public abstract class ServoBase  extends FacilinoActuatorBase {
   }
 
   @SimpleFunction(description = "Sends a servo telegram to Facilino.")
-  public abstract void Move(byte angle);
+  public void Move(byte angle) {};
 
 }

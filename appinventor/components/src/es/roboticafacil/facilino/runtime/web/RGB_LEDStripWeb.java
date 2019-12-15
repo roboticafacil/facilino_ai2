@@ -20,10 +20,10 @@ import com.google.appinventor.components.common.YaVersion;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
-import es.roboticafacil.facilino.common.RGB_LEDStripBase;
+import es.roboticafacil.facilino.runtime.web.RGB_LEDStripBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebActuator;
 
 //import java.lang.Class;
@@ -78,25 +78,11 @@ public class RGB_LEDStripWeb extends RGB_LEDStripBase implements FacilinoWebActu
 		for (int i = 0; i < (array.length-1); i++)
 		{
 			Object el = array[i];
-			String s = el.toString();
-			try {
-			n = Integer.decode(s);
-			} catch (NumberFormatException e) {
-				System.out.println(e.toString());
-			return "";
-			}
-			str+=n;
+			str+=el.toString();
 			str+=",";
 		}
 		Object el = array[array.length-1];
-		String s = el.toString();
-		try {
-		n = Integer.decode(s);
-		} catch (NumberFormatException e) {
-			System.out.println(e.toString());
-		return "";
-		}
-		str+=n;
+		str+=el.toString();
 		return str;
 	}
   

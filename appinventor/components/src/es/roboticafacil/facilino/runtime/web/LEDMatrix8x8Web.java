@@ -20,10 +20,10 @@ import com.google.appinventor.components.common.YaVersion;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 import com.google.appinventor.components.runtime.util.YailList;
 
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
+import es.roboticafacil.facilino.runtime.web.Facilino;
+import es.roboticafacil.facilino.runtime.web.FacilinoBase;
 import es.roboticafacil.facilino.runtime.web.FacilinoWeb;
-import es.roboticafacil.facilino.common.LEDMatrix8x8Base;
+import es.roboticafacil.facilino.runtime.web.LEDMatrix8x8Base;
 import es.roboticafacil.facilino.runtime.web.FacilinoWebActuator;
 
 //import java.lang.Class;
@@ -62,9 +62,9 @@ public class LEDMatrix8x8Web  extends LEDMatrix8x8Base implements FacilinoWebAct
 	
   
   @SimpleFunction(description = "Sends a telegram with a expression for a LED Matrix 8x8 to Facilino.")
-  public void Show(long expression) {
+  public void ShowCustomExpression(int col1, int col2, int col3, int col4, int col5, int col6, int col7, int col8) {
 		if (_facilino instanceof FacilinoWeb)
-			((FacilinoWeb)_facilino).GetURL(buildURLExpr(expression));
+			((FacilinoWeb)_facilino).GetURL(buildURLExpr(col1,col2,col3,col4,col5,col6,col7,col8));
   }
   
   @SimpleFunction(description = "Sends a number with the predefined expression for LED Matrix 8x8 telegram to Facilino.")
@@ -73,7 +73,7 @@ public class LEDMatrix8x8Web  extends LEDMatrix8x8Base implements FacilinoWebAct
 			((FacilinoWeb)_facilino).GetURL(buildURLPredefExpr(number));
   }
   
-  private String buildURLExpr(long expression)
+  private String buildURLExpr(int col1, int col2, int col3, int col4, int col5, int col6, int col7, int col8)
 	{
 		String str="/";
 		str+=logTag;
@@ -83,8 +83,22 @@ public class LEDMatrix8x8Web  extends LEDMatrix8x8Base implements FacilinoWebAct
 		str+=_DIN_pin;
 		str+="_";
 		str+=_CS_pin;
-		str+="?expression=";
-		str+=expression;
+		str+="?c1=";
+		str+=col1;
+		str+="&c2=";
+		str+=col2;
+		str+="&c3=";
+		str+=col3;
+		str+="&c4=";
+		str+=col4;
+		str+="&c5=";
+		str+=col5;
+		str+="&c6=";
+		str+=col6;
+		str+="&c7=";
+		str+=col7;
+		str+="&c8=";
+		str+=col8;
 		return str;
 	}
 	

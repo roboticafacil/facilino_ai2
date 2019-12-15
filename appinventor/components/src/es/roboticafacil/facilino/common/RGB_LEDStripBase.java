@@ -32,13 +32,7 @@ import java.util.Set;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A RGB LED Strip component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/led_strip_16x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -68,12 +62,12 @@ public abstract class RGB_LEDStripBase  extends FacilinoActuatorBase {
   }
   
   @SimpleFunction(description = "Sends a RGB_LEDs strip telegram to Facilino.")
-  public abstract void SetLEDs(YailList colors);
+  public void SetLEDs(YailList colors) {};
   
   @SimpleFunction(description = "Sends a number with the predefined RGB LED strip telegram to Facilino.")
-  public abstract void ShowPredefLEDs(int number);
+  public void ShowPredefLEDs(int number) {};
   
   @SimpleFunction(description = "Sends a number with the predefined RGB LED strip telegram to Facilino.")
-  public abstract void SetBrightness(int number);
+  public void SetBrightness(int number) {};
 
 }

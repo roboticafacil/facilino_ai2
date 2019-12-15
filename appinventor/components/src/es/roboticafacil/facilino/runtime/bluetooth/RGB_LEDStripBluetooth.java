@@ -9,6 +9,7 @@ import java.util.*;
 import com.google.appinventor.components.runtime.*;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.PropertyCategory;
+import com.google.appinventor.components.annotations.UsesLibraries;
 import com.google.appinventor.components.common.PropertyTypeConstants;
 import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.SimpleObject;
@@ -20,9 +21,9 @@ import com.google.appinventor.components.common.YaVersion;
 import com.google.appinventor.components.runtime.util.SdkLevel;
 
 import com.google.appinventor.components.runtime.util.YailList;
-import es.roboticafacil.facilino.common.Facilino;
-import es.roboticafacil.facilino.common.FacilinoBase;
-import es.roboticafacil.facilino.common.RGB_LEDStripBase;
+import es.roboticafacil.facilino.runtime.bluetooth.Facilino;
+import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBase;
+import es.roboticafacil.facilino.runtime.bluetooth.RGB_LEDStripBase;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothClient;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothActuator;
 
@@ -45,6 +46,7 @@ import java.util.Set;
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
+//@UsesLibraries(libraries = "es.roboticafacil.facilino.runtime.bluetooth.jar")
 public class RGB_LEDStripBluetooth  extends RGB_LEDStripBase implements FacilinoBluetoothActuator {
   /**
    * Creates a new Facilino component.

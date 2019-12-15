@@ -32,13 +32,7 @@ import java.util.Set;
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-@DesignerComponent(version = Facilino.VERSION,
-                   description = "A LED Matrix 8x8 component that provides a low-level interface to Facilino " +
-                                 "with functions to send direct commands/telegrams to Facilino.",
-                   category = ComponentCategory.EXTENSION,
-                   nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/LED_matrix_24x16.png")
-@SimpleObject (external=true)
+//@SimpleObject (external =true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
@@ -97,10 +91,10 @@ public abstract class LEDMatrix8x8Base  extends FacilinoActuatorBase {
   }
 
   @SimpleFunction(description = "Sends a telegram with a expression for a LED Matrix 8x8 to Facilino.")
-  public abstract void Show(long expression);
+  public void Show(long expression) {};
   
   @SimpleFunction(description = "Sends a number with the predefined expression for LED Matrix 8x8 telegram to Facilino.")
-  public abstract void ShowPredefExpression(byte number);
+  public void ShowPredefExpression(byte number) {};
   
   @SimpleFunction(description = "Converts rows into an expression")
   public long ToExpression(byte col1, byte col2, byte col3, byte col4, byte col5, byte col6, byte col7, byte col8) {
