@@ -448,7 +448,7 @@ public abstract class FacilinoBluetoothConnectionBase extends FacilinoBase
    *
    * @param list the list of numeric values to write
    */
-  /*@SimpleFunction(description = "Send a list of byte values to the connected Bluetooth device.")
+  /*@SimpleFunction(description = "Send a list of byte values to the connected Bluetooth device.")*/
   public void SendBytes(YailList list) {
     String functionName = "SendBytes";
     Object[] array = list.toArray();
@@ -475,7 +475,7 @@ public abstract class FacilinoBluetoothConnectionBase extends FacilinoBase
       }
     }
     write(functionName, bytes);
-  }*/
+  }
 
   /**
    * Writes the given byte to the output stream.

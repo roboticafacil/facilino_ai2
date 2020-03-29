@@ -88,9 +88,10 @@ public class FacilinoWebManager  extends AsyncTask<Void, Void, List<String> > {
 				(ipAddress >> 24 & 0xff));
 
 			String prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
-			
+			int to = delegate.To();
+			int from = delegate.From();
 
-			for (int i = 0; i < 256; i++) {
+			for (int i = from; i <= to; i++) {
 				try{
 					  String testIp = prefix + i;
 						delegate.ScanningHost(testIp);

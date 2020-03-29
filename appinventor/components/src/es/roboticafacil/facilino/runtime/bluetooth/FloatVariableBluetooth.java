@@ -11,6 +11,7 @@ import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.PropertyCategory;
 import com.google.appinventor.components.annotations.UsesLibraries;
 import com.google.appinventor.components.common.PropertyTypeConstants;
+import com.google.appinventor.components.annotations.SimpleEvent;
 import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.SimpleObject;
 import com.google.appinventor.components.annotations.SimpleProperty;
@@ -26,35 +27,36 @@ import com.google.appinventor.components.runtime.util.SdkLevel;
 import com.google.appinventor.components.runtime.util.YailList;
 import es.roboticafacil.facilino.runtime.bluetooth.Facilino;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBase;
+import es.roboticafacil.facilino.runtime.bluetooth.BooleanVariableBase;
+import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothSensorActuator;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothClient;
-import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBluetoothActuator;
-import es.roboticafacil.facilino.runtime.bluetooth.AnalogWriteBase;
 
 //import java.lang.Class;
 import java.lang.reflect.*;
 import java.util.Set;
+import org.json.JSONObject;
 /**
- * An PWM digital output (analog write) component that provides a low-level interface to Facilino
+ * A buzzer component that provides a low-level interface to Facilino
  * with functions to send direct commands/telegrams to Facilino.
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
 @DesignerComponent(version = Facilino.VERSION,
-                   description = "An PWM ditial output (analog write) component that provides a low-level interface to Facilino " +
+                   description = "A float variable component that provides a low-level interface to Facilino " +
                                  "with functions to send direct commands/telegrams to Facilino.",
                    category = ComponentCategory.EXTENSION,
                    nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/pwm_signal_16x16.png")
+                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/float.png")
 @SimpleObject (external=true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
 //@UsesLibraries(libraries = "es.roboticafacil.facilino.runtime.bluetooth.jar")
-public class AnalogWriteBluetooth  extends AnalogWriteBase implements FacilinoBluetoothActuator {
+public class FloatVariableBluetooth  extends FloatVariableBase implements FacilinoBluetoothSensorActuator {
 	/**
 	 * Creates a new Facilino component.
 	 */
-	public AnalogWriteBluetooth(ComponentContainer container) {
+	public FloatVariableBluetooth(ComponentContainer container) {
 		super(container);
 	}
 	
@@ -64,25 +66,80 @@ public class AnalogWriteBluetooth  extends AnalogWriteBase implements FacilinoBl
 	public void FacilinoBluetoothClient(FacilinoBluetoothClient facilinoBase) {
 		this.FacilinoDevice(facilinoBase);
 	}
-	
+
 	@Override
-	@SimpleFunction(description = "Sets an analog output.")
-	public void Set(int value) {
+	@SimpleFunction(description = "Sends a 'read float variable' request to Facilino and waits for response.")
+	public void Update() throws InterruptedException{
+		_dataDispatched=false;
+		int maxWait=200;
+		if (_facilino instanceof FacilinoBluetoothClient)
+		{
+			((FacilinoBluetoothClient)_facilino).SendBytes(readTelegram());
+			while((!_dataDispatched)&&(maxWait>0)){ Thread.sleep(1); maxWait--;};
+			if (maxWait<=0)
+				this.Timeout(Facilino.ERROR_DATA_NOT_DISPATCHED);
+		}
+	}
+
+	@Override
+	@SimpleFunction(description = "Sends a 'read float variable' request to Facilino.")
+	public void Request() {
+		_dataDispatched=false;
+		if (_facilino instanceof  FacilinoBluetoothClient)
+			((FacilinoBluetoothClient)_facilino).SendBytes(readTelegram());
+	}
+
+	@Override
+	@SimpleFunction(description = "Sets the value of a float variable.")
+	public void Set(float value) {
 		_value=value;
 		if (_facilino instanceof FacilinoBluetoothClient)
 			((FacilinoBluetoothClient)_facilino).SendBytes(setTelegram(value));
 	}
-	
-	private YailList setTelegram(int value)
-	{
-		byte[] bytes = new byte[7];
+
+	private YailList readTelegram() {
+		byte[] bytes = new byte[5];
 		bytes[0]='@';
-		bytes[1]=FacilinoBluetoothClient.CMD_ANALOG_WRITE;
-		bytes[2]=3;
-		bytes[3]=(byte)_pin;
-		bytes[4]=(byte)((value>>8)&0x00FF);
-		bytes[5]=(byte)((value)&0x00FF);
-		bytes[6]='*';
+		bytes[1]=FacilinoBluetoothClient.CMD_FLOAT_VAR_READ_REQ;
+		bytes[2]=1;
+		bytes[3]=(byte)_index;
+		bytes[4]='*';
+		int n=bytes.length;
+		Object[] array1 = new Object[n];
+		for (int i=0;i<n;i++)
+		array1[i]=(Object)bytes[i];
+		YailList list = YailList.makeList(array1);
+		return list;
+	}
+
+	public void dispatchData(byte cmd, byte[] data) {
+		if (cmd==FacilinoBluetoothClient.CMD_FLOAT_VAR_READ_RESP){
+			if (data[0]==_index)
+			{
+				int intBits =  data[0] << 24 | (data[1] & 0xFF) << 16 | (data[2] & 0xFF) << 8 | (data[3] & 0xFF);
+				_value = Float.intBitsToFloat(intBits);
+				if (_firstTime)
+					_firstTime=false;
+				Received(_value);
+				_dataDispatched=true;
+			}
+		}
+	}
+
+	//@SimpleFunction(description = "Returns the float variable to send")
+	private YailList setTelegram(float value)
+	{
+		int intBits =  Float.floatToIntBits(value);
+		byte[] bytes = new byte[9];
+		bytes[0]='@';
+		bytes[1]=FacilinoBluetoothClient.CMD_FLOAT_VAR_WRITE_REQ;
+		bytes[2]=5;
+		bytes[3]=(byte)_index;
+		bytes[4]=(byte)((intBits>>24)&0x00FF);
+		bytes[5]=(byte)((intBits>>16)&0x00FF);
+		bytes[6]=(byte)((intBits>>8)&0x00FF);
+		bytes[7]=(byte)((intBits)&0x00FF);
+		bytes[8]='*';
 		int n=bytes.length;
 		Object[] array = new Object[n];
 		for (int i=0;i<n;i++)

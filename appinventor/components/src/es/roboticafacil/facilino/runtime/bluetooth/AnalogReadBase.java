@@ -63,16 +63,16 @@ public abstract class AnalogReadBase  extends FacilinoSensorBase {
 		_pin=0;
 	}
 	
-	@SimpleProperty(description = "The analog read pin.",
+	@SimpleProperty(description = "The analog input pin.",
 									category = PropertyCategory.BEHAVIOR)
-	public byte AnalogPin() {
+	public byte Pin() {
 		return _pin;
 	}
 
 	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
 										defaultValue = "0")
 	@SimpleProperty(description = "The analog pin")
-	public void AnalogPin(byte pin) {
+	public void Pin(byte pin) {
 		_pin = pin;
 	}
 	

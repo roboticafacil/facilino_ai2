@@ -77,9 +77,18 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 	public static byte CMD_DHT_READ_REQ = 0x22;
 	public static byte CMD_DHT_READ_RESP = 0x23;
 	
-	public static byte CMD_BOOLEAN_VAR = (byte)0x80;
-	public static byte CMD_BOOLEAN_VAR_REQ = (byte)0x81;
-	public static byte CMD_BOOLEAN_VAR_RESP = (byte)0x82;
+	public static byte CMD_BOOLEAN_VAR_WRITE_REQ = (byte)0x80;
+	public static byte CMD_BOOLEAN_VAR_READ_REQ = (byte)0x81;
+	public static byte CMD_BOOLEAN_VAR_READ_RESP = (byte)0x82;
+	public static byte CMD_INT_VAR_WRITE_REQ = (byte)0x83;
+	public static byte CMD_INT_VAR_READ_REQ = (byte)0x84;
+	public static byte CMD_INT_VAR_READ_RESP = (byte)0x85;
+	public static byte CMD_FLOAT_VAR_WRITE_REQ = (byte)0x86;
+	public static byte CMD_FLOAT_VAR_READ_REQ = (byte)0x87;
+	public static byte CMD_FLOAT_VAR_READ_RESP = (byte)0x88;
+	public static byte CMD_STRING_VAR_WRITE_REQ = (byte)0x89;
+	public static byte CMD_STRING_VAR_READ_REQ = (byte)0x8A;
+	public static byte CMD_STRING_VAR_READ_RESP = (byte)0x8B;
 	
 	public static byte CMD_LED_MATRIX = 0x50;
 	public static byte CMD_LED_MATRIX_PREDEF_EXPR = 0x51;
@@ -150,8 +159,8 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
    * @param address the MAC address of the Bluetooth device
    * @return true if the device is paired, false otherwise
    */
-  /*@SimpleFunction(description = "Checks whether the Bluetooth device with the specified address " +
-  "is paired.")*/
+  @SimpleFunction(description = "Checks whether the Bluetooth device with the specified address " +
+  "is paired.")
   public boolean IsDevicePaired(String address) {
     String functionName = "IsDevicePaired";
     Object bluetoothAdapter = BluetoothReflection.getBluetoothAdapter();
@@ -406,7 +415,7 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
   
   @SimpleFunction(description = "Forget last MAC address of the last connected device")
   public final void ForgetLastConnection() {
-	  db.ClearAll();
+	  db.ClearTag("MAC");
   }
   
   @SimpleFunction(description = "Save current MAC address of the connected device")
@@ -417,9 +426,15 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
   @SimpleFunction(description = "Reconnect with the last connected device using the last MAC address available")
   public final boolean Reconnect() {
 	  _address=(String)db.GetValue("MAC","");
-	  if (this.IsDevicePaired(_address) && !this.IsConnected())
+	  if (this.IsDevicePaired(_address) && this.IsConnected())
 	  {
-		  return this.Connect(_address);
+		  return true;
+	  }
+	  else if (this.IsDevicePaired(_address) && !this.IsConnected())
+	  {
+		  if (!_address.isEmpty())
+			return this.Connect(_address);
+		  return false;
 	  }
 	  else
 		  return false;
@@ -439,12 +454,10 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 	
 	public void SendBytes(YailList list)
 	{
-		{
-			if (this.IsConnected()){
-				this.lock();
-				this.SendBytes(list);
-				this.unlock();
-			}
+		if (this.IsConnected()){
+			//this.lock();
+			super.SendBytes(list);
+			//this.unlock();
 		}
 	}
 	
@@ -477,7 +490,13 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 				{
 					if (sensor instanceof FacilinoBluetoothSensor)
 					{
-						((FacilinoBluetoothSensor) sensor).dispatchData(_telegramCmd,_telegramData);
+						((FacilinoBluetoothSensor)sensor).dispatchData(_telegramCmd,_telegramData);
+						EventDispatcher.dispatchEvent(this, "TelegramReceived",_telegramCmd,_telegramLength,_telegramData);
+					}
+					if (sensor instanceof FacilinoBluetoothSensorActuator)
+					{
+						((FacilinoBluetoothSensorActuator)sensor).dispatchData(_telegramCmd,_telegramData);
+						EventDispatcher.dispatchEvent(this, "TelegramReceived",_telegramCmd,_telegramLength,_telegramData);
 					}
 				}
 				_telegramPos=0;
@@ -494,4 +513,11 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 	public void TelegramError(String error) {
 			EventDispatcher.dispatchEvent(this, "TelegramError",error);
 	}
+	
+	@SimpleEvent(description = "Telegram received")
+	public void TelegramReceived(int cmd, int length, YailList data) {
+			EventDispatcher.dispatchEvent(this, "Bytes received",cmd,length,data);
+	}
+	
+	
 }

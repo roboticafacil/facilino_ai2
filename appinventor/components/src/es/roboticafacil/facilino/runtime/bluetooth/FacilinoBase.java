@@ -62,6 +62,9 @@ public class FacilinoBase  extends AndroidNonvisibleComponent implements Compone
 	public static byte TYPE_LED_STRIP = 0x12;
 	public static byte TYPE_GASMQX = 0x13;
 	public static byte TYPE_BOOLEAN_VAR = 0x14;
+	public static byte TYPE_INT_VAR = 0x15;
+	public static byte TYPE_FLOAT_VAR = 0x16;
+	public static byte TYPE_STRING_VAR = 0x17;
 	
 	public static byte TYPE_MANAGER_BLUETOOTH = 0x00;
 	public static byte TYPE_MANAGER_HTTP = 0x01;

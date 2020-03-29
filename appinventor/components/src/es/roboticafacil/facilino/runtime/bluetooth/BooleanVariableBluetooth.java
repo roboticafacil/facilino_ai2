@@ -110,7 +110,7 @@ public class BooleanVariableBluetooth  extends BooleanVariableBase implements Fa
 	private YailList readTelegram() {
 		byte[] bytes = new byte[5];
 		bytes[0]='@';
-		bytes[1]=FacilinoBluetoothClient.CMD_BOOLEAN_VAR_REQ;
+		bytes[1]=FacilinoBluetoothClient.CMD_BOOLEAN_VAR_READ_REQ;
 		bytes[2]=1;
 		bytes[3]=(byte)_index;
 		bytes[4]='*';
@@ -123,7 +123,7 @@ public class BooleanVariableBluetooth  extends BooleanVariableBase implements Fa
 	}
 
 	public void dispatchData(byte cmd, byte[] data) {
-		if (cmd==FacilinoBluetoothClient.CMD_BOOLEAN_VAR_RESP){
+		if (cmd==FacilinoBluetoothClient.CMD_BOOLEAN_VAR_READ_RESP){
 			if (data[0]==_index)
 			{
 				_value = (data[1]==1) ? true : false;
@@ -138,12 +138,11 @@ public class BooleanVariableBluetooth  extends BooleanVariableBase implements Fa
 		}
 	}
 
-	//@SimpleFunction(description = "Returns the tone telegram to send")
 	private YailList setTelegram(boolean value)
 	{
 		byte[] bytes = new byte[6];
 		bytes[0]='@';
-		bytes[1]=FacilinoBluetoothClient.CMD_BOOLEAN_VAR;
+		bytes[1]=FacilinoBluetoothClient.CMD_BOOLEAN_VAR_WRITE_REQ;
 		bytes[2]=2;
 		bytes[3]=(byte)_index;
 		bytes[4]=(value) ? (byte)1 : (byte)0;

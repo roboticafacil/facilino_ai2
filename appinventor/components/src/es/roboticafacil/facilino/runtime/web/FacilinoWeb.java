@@ -155,6 +155,8 @@ public class FacilinoWeb  extends FacilinoBase implements IPsNamesResponse {
 	protected Map<String, String> requestHeaders = new HashMap<>();
 	private FacilinoWebManager webManager;
 	private List<String> hosts = new ArrayList<String>();
+	private int from=1;
+	private int to=255;
 	
 	private static final String LOG_TAG = "FacilinoWeb";
 	
@@ -201,6 +203,36 @@ public class FacilinoWeb  extends FacilinoBase implements IPsNamesResponse {
 	@SimpleProperty
 	public void ScanTimeOut(int time) {
 		scanTimeOut=time;
+	}
+	
+	@SimpleProperty(
+			category = PropertyCategory.BEHAVIOR,
+			description ="Initial Scan Address")
+	public int From() {
+		return from;
+	}
+	
+	@DesignerProperty(
+			editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
+			defaultValue = "1")
+	@SimpleProperty
+	public void From(int f) {
+		from=f;
+	}
+	
+	@SimpleProperty(
+			category = PropertyCategory.BEHAVIOR,
+			description ="Final Scan Address")
+	public int To() {
+		return to;
+	}
+	
+	@DesignerProperty(
+			editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
+			defaultValue = "255")
+	@SimpleProperty
+	public void To(int t) {
+		to=t;
 	}
 	
 	/*@SimpleProperty(

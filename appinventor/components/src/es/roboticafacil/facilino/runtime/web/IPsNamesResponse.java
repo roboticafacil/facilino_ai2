@@ -10,4 +10,6 @@ public interface IPsNamesResponse {
 	void ScanningError(String error);
 	int ScanTimeOut();
 	List<String> GetHosts();
+	int From();
+	int To();
 }

@@ -10,6 +10,7 @@ import com.google.appinventor.components.runtime.*;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.PropertyCategory;
 import com.google.appinventor.components.common.PropertyTypeConstants;
+import com.google.appinventor.components.annotations.SimpleEvent;
 import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.SimpleObject;
 import com.google.appinventor.components.annotations.SimpleProperty;
@@ -27,51 +28,66 @@ import es.roboticafacil.facilino.runtime.bluetooth.Facilino;
 import es.roboticafacil.facilino.runtime.bluetooth.FacilinoBase;
 
 //import java.lang.Class;
+import java.lang.String;
 import java.lang.reflect.*;
 import java.util.Set;
+import org.json.JSONObject;
 /**
- * An analog output (analog write) component that provides a low-level interface to Facilino
+ * A string variable component that provides a low-level interface to Facilino
  * with functions to send direct commands/telegrams to Facilino.
  *
  * @author Leopoldo Armesto soporte@roboticafacil.es
  */
-//@SimpleObject (external =true)
 @DesignerComponent(version = Facilino.VERSION,
-                   description = "An PWM ditial output (analog write) component that provides a low-level interface to Facilino " +
+                   description = "A string variable component that provides a low-level interface to Facilino " +
                                  "with functions to send direct commands/telegrams to Facilino.",
                    category = ComponentCategory.EXTENSION,
                    nonVisible = true,
-                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/pwm_signal_16x16.png")
+                   iconName = "https://roboticafacil.es/facilino/blockly/img/ai2/string.png")
+@SimpleObject (external=true)
 @UsesPermissions(permissionNames = "android.permission.INTERNET," +
                                    "android.permission.WRITE_EXTERNAL_STORAGE," +
                                    "android.permission.READ_EXTERNAL_STORAGE")
-public abstract class AnalogWriteBase  extends FacilinoActuatorBase {
-	protected byte _pin;
-	protected int _value;
-	
+public abstract class StringVariableBase  extends FacilinoActuatorSensorBase {
+	protected byte _index;
+	protected String _value;
+	protected boolean _firstTime;
+
 	/**
 	 * Creates a new Facilino component.
 	 */
-	public AnalogWriteBase(ComponentContainer container) {
-		super(container,"AnalogWrite",FacilinoBase.TYPE_ANALOG_WRITE);
-	_pin=3;
-	}
-	
-	@SimpleProperty(description = "The PWM digital output pin.",category = PropertyCategory.BEHAVIOR)
-	public byte Pin() {
-		return _pin;
+	public StringVariableBase(ComponentContainer container) {
+		super(container,"StringVariable",FacilinoBase.TYPE_STRING_VAR);
+	_index=0;
 	}
 
-	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,defaultValue = "3")
-	@SimpleProperty(description = "The PWM digital output pin.")
-	public void Pin(byte pin) {
-		_pin = pin;
+	@SimpleProperty(description = "String index position.",
+									category = PropertyCategory.BEHAVIOR)
+	public byte Index() {
+		return _index;
 	}
-	
-	@SimpleProperty(description = "The PWM digital output value.",category = PropertyCategory.BEHAVIOR)
-	public int Value() {
+
+	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
+										defaultValue = "0")
+	@SimpleProperty(description = "String index position.")
+	public void Index(byte index) {
+		_index = index;
+	}
+
+	@SimpleProperty(description = "The string value.",
+									category = PropertyCategory.BEHAVIOR)
+	public String Value() {
 		return _value;
 	}
-	
-	public abstract void Set(int value);
+
+	public abstract void Update() throws InterruptedException;
+
+	public abstract void Request();
+
+	public abstract void Set(String value);
+
+	@SimpleEvent(description = "String variable read event.")
+	public void Received(String value){
+			EventDispatcher.dispatchEvent(this, "Received",value);
+	}
 }
