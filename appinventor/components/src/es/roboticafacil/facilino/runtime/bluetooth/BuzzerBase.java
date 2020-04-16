@@ -71,11 +71,6 @@ public abstract class BuzzerBase  extends FacilinoActuatorBase {
 	
 	public abstract void Tone(int frequency, int duration);
 	
-	/*@SimpleFunction(description = "Sends a number with the predefined melody telegram to Facilino.")
-	public void PredefMelody(byte number) {
-		_facilino.SendBytes(predefMelodyTelegram(number));
-	}*/
-	
-	public abstract void Melody(YailList melody);
+	public abstract void Song(int number);
 
 }

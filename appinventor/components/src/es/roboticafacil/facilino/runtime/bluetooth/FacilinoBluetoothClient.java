@@ -53,7 +53,7 @@ import java.util.UUID;
 //@UsesLibraries(libraries = "es.roboticafacil.facilino.runtime.bluetooth.jar")
 public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBase {
   private static final String SPP_UUID = "00001101-0000-1000-8000-00805F9B34FB";
-  private final List<Component> attachedComponents = new ArrayList<Component>();
+  //private final List<Component> attachedComponents = new ArrayList<Component>();
   private Set<Integer> acceptableDeviceClasses;
   private String _address;
   
@@ -66,16 +66,21 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 	public static byte CMD_ANALOG_READ_REQ = 0x03;
 	public static byte CMD_ANALOG_READ_RESP = 0x04;
 	public static byte CMD_ANALOG_WRITE = 0x05;
-	public static byte CMD_PUSH_BUTTON = 0x09;
+	//public static byte CMD_PUSH_BUTTON = 0x09;
 	public static byte CMD_SERVO = 0x10;
 	public static byte CMD_SERVO_CONT = 0x11;
 	public static byte CMD_SONAR_READ_REQ = 0x12;
 	public static byte CMD_SONAR_READ_RESP = 0x13;
 	public static byte CMD_BUZZER_TONE = 0x20;
 	public static byte CMD_BUZZER_MELODY = 0x21;
-	//public static byte CMD_BUZZER_PREDEF_MELODY = 0x22;
 	public static byte CMD_DHT_READ_REQ = 0x22;
 	public static byte CMD_DHT_READ_RESP = 0x23;
+
+	public static byte CMD_LED_MATRIX = 0x50;
+	public static byte CMD_LED_MATRIX_PREDEF_EXPR = 0x51;
+	public static byte CMD_LED_STRIP = 0x60;
+	public static byte CMD_LED_STRIP_PREDEF = 0x61;
+	public static byte CMD_LED_STRIP_SET_BRIGHTNESS = 0x62;
 	
 	public static byte CMD_BOOLEAN_VAR_WRITE_REQ = (byte)0x80;
 	public static byte CMD_BOOLEAN_VAR_READ_REQ = (byte)0x81;
@@ -90,11 +95,7 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 	public static byte CMD_STRING_VAR_READ_REQ = (byte)0x8A;
 	public static byte CMD_STRING_VAR_READ_RESP = (byte)0x8B;
 	
-	public static byte CMD_LED_MATRIX = 0x50;
-	public static byte CMD_LED_MATRIX_PREDEF_EXPR = 0x51;
-	public static byte CMD_LED_STRIP = 0x60;
-	public static byte CMD_LED_STRIP_PREDEF = 0x61;
-	public static byte CMD_LED_STRIP_SET_BRIGHTNESS = 0x62;
+
 	
 	private byte[] _telegramData = new byte[255];
 	private byte _telegramLength = 0;
@@ -115,7 +116,7 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 	db = new TinyDB(container);
   }
 
-  boolean attachComponent(Component component, Set<Integer> acceptableDeviceClasses) {
+  /*boolean attachComponent(Component component, Set<Integer> acceptableDeviceClasses) {
     if (attachedComponents.isEmpty()) {
       // If this is the first/only attached component, we keep the acceptableDeviceClasses.
       this.acceptableDeviceClasses = (acceptableDeviceClasses == null)
@@ -151,7 +152,7 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
     if (attachedComponents.isEmpty()) {
       acceptableDeviceClasses = null;
     }
-  }
+  }*/
 
   /**
    * Checks whether the Bluetooth device with the given address is paired.
@@ -486,17 +487,16 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 			else if ((_telegramPos==(_telegramLength+3))&&(data=='*'))
 			{
 				//Here we have receive a successful telegram
+				EventDispatcher.dispatchEvent(this, "TelegramReceived",_telegramCmd,_telegramLength,_telegramData);
 				for (FacilinoSensor sensor: attachedSensors)
 				{
 					if (sensor instanceof FacilinoBluetoothSensor)
 					{
 						((FacilinoBluetoothSensor)sensor).dispatchData(_telegramCmd,_telegramData);
-						EventDispatcher.dispatchEvent(this, "TelegramReceived",_telegramCmd,_telegramLength,_telegramData);
 					}
 					if (sensor instanceof FacilinoBluetoothSensorActuator)
 					{
 						((FacilinoBluetoothSensorActuator)sensor).dispatchData(_telegramCmd,_telegramData);
-						EventDispatcher.dispatchEvent(this, "TelegramReceived",_telegramCmd,_telegramLength,_telegramData);
 					}
 				}
 				_telegramPos=0;
@@ -516,7 +516,7 @@ public final class FacilinoBluetoothClient extends FacilinoBluetoothConnectionBa
 	
 	@SimpleEvent(description = "Telegram received")
 	public void TelegramReceived(int cmd, int length, YailList data) {
-			EventDispatcher.dispatchEvent(this, "Bytes received",cmd,length,data);
+			EventDispatcher.dispatchEvent(this, "TelegramReceived",cmd,length,data);
 	}
 	
 	

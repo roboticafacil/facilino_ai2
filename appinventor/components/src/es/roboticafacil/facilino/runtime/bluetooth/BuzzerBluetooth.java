@@ -73,16 +73,11 @@ public class BuzzerBluetooth  extends BuzzerBase implements FacilinoBluetoothAct
 			((FacilinoBluetoothClient)_facilino).SendBytes(toneTelegram(frequency,duration));
 	}
 	
-	/*@SimpleFunction(description = "Sends a number with the predefined melody telegram to Facilino.")
-	public void PredefMelody(byte number) {
-		_facilino.SendBytes(predefMelodyTelegram(number));
-	}*/
-	
 	@Override
-	@SimpleFunction(description = "Sends a melody telegram to Facilino.")
-	public void Melody(YailList melody) {
+	@SimpleFunction(description = "Sends a predefine melody telegram to Facilino.")
+	public void Song(int number) {
 		if (_facilino instanceof FacilinoBluetoothClient)
-			((FacilinoBluetoothClient)_facilino).SendBytes(melodyTelegram(melody));
+			((FacilinoBluetoothClient)_facilino).SendBytes(predefMelodyTelegram(number));
 	}
 	
 	private YailList toneTelegram(int frequency, int duration)
@@ -105,56 +100,20 @@ public class BuzzerBluetooth  extends BuzzerBase implements FacilinoBluetoothAct
 		return list;
 	}
 	
-	/*private YailList predefMelodyTelegram(byte number)
+	private YailList predefMelodyTelegram(int number)
 	{
 		byte[] bytes = new byte[6];
 		bytes[0]='@';
-		bytes[1]=FacilinoBase.CMD_BUZZER_PREDEF_MELODY;
+		bytes[1]=FacilinoBluetoothClient.CMD_BUZZER_MELODY;
 		bytes[2]=2;
 		bytes[3]=(byte)_pin;
-		bytes[4]=number;
+		bytes[4]=(byte)number;
 		bytes[5]='*';
 		int n=bytes.length;
 		Object[] array = new Object[n];
 		for (int i=0;i<n;i++)
 		array[i]=(Object)bytes[i];
 		YailList list = YailList.makeList(array);
-		return list;
-	}*/
-	
-	private YailList melodyTelegram(YailList melody)
-	{
-		Object[] array = melody.toArray();
-		byte[] bytes = new byte[4*array.length+5];
-		bytes[0]='@';
-		bytes[1]=FacilinoBluetoothClient.CMD_BUZZER_MELODY;
-		int total_length=4*array.length+1;
-		bytes[2]=(byte)(total_length & 0xFF);
-		bytes[3]=(byte)_pin;
-		int n;
-		int j=4;
-		YailList list;
-		for (int i = 0; i < array.length; i++)
-		{
-			Object el = array[i];
-			String s = el.toString();
-			try {
-			n = Integer.decode(s);
-			} catch (NumberFormatException e) {
-				System.out.println(e.toString());
-			return new YailList();
-			}
-			bytes[j++]=(byte) ((n>>24) & 0xFF);
-			bytes[j++]=(byte) ((n>>16) & 0xFF);
-			bytes[j++]=(byte) ((n>>8) & 0xFF);
-			bytes[j++]=(byte) (n & 0xFF);
-		}
-		bytes[total_length+4]='*';
-		n=bytes.length;
-		Object[] array1 = new Object[n];
-		for (int i=0;i<n;i++)
-		array1[i]=(Object)bytes[i];
-		list = YailList.makeList(array1);
 		return list;
 	}
 

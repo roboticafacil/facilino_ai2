@@ -59,8 +59,7 @@ public abstract class ServoContBase  extends FacilinoActuatorBase {
     return _pin;
   }
 
-  //@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,
-  //                  defaultValue = "3")
+  @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER,defaultValue = "3")
   @SimpleProperty(description = "The servo pin")
   public void Pin(byte pin) {
     _pin = pin;

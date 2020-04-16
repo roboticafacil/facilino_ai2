@@ -65,6 +65,7 @@ public abstract class FacilinoBase  extends AndroidNonvisibleComponent implement
 	
 	public static byte TYPE_MANAGER_BLUETOOTH = 0x00;
 	public static byte TYPE_MANAGER_HTTP = 0x01;
+	public static byte TYPE_MANAGER_BLE = 0x02;
 	
 	protected final Lock _mutex = new ReentrantLock(true);
 	

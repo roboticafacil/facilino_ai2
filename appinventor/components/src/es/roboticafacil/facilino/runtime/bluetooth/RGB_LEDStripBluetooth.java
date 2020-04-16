@@ -73,7 +73,7 @@ public class RGB_LEDStripBluetooth  extends RGB_LEDStripBase implements Facilino
   @SimpleFunction(description = "Sends a number with the predefined RGB LED strip telegram to Facilino.")
   public void ShowPredefLEDs(int number) {
 	  if (_facilino instanceof FacilinoBluetoothClient)
-			((FacilinoBluetoothClient)_facilino).SendBytes(showPredefLEDsTelegram(number));
+			((FacilinoBluetoothClient)_facilino).SendBytes(showPredefLEDsTelegram((byte)number));
   }
   
   @Override
@@ -118,18 +118,15 @@ public class RGB_LEDStripBluetooth  extends RGB_LEDStripBase implements Facilino
 	  return list;
   }
   
-  private YailList showPredefLEDsTelegram(int number)
+  private YailList showPredefLEDsTelegram(byte number)
   {
-	  byte[] bytes = new byte[9];
+	  byte[] bytes = new byte[6];
 	  bytes[0]='@';
 	  bytes[1]=FacilinoBluetoothClient.CMD_LED_STRIP_PREDEF;
-	  bytes[2]=5;
+	  bytes[2]=2;
 	  bytes[3]=(byte)_pin;
-	  bytes[4]=(byte) ((number>>24) & 0xFF);
-	  bytes[5]=(byte) ((number>>16) & 0xFF);
-	  bytes[6]=(byte) ((number>>8) & 0xFF);
-	  bytes[7]=(byte) (number & 0xFF);
-	  bytes[8]='*';
+	  bytes[4]=number;
+	  bytes[5]='*';
 	  int n=bytes.length;
 	  Object[] array1 = new Object[n];
 	  for (int i=0;i<n;i++)

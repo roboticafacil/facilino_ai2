@@ -9,7 +9,7 @@ package es.roboticafacil.facilino.runtime.bluetooth;
 /**
  * Callback for receiving Bluetooth connection events
  *
- * @author lizlooney@google.com (Liz Looney)
+ * @author Leopoldo Armesto soporte@roboticafacil.es
  */
 interface FacilinoActuator {
   /**
